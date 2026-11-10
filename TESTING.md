@@ -2,7 +2,7 @@
 
 ## Automated checks actually run
 
-`gradle build` succeeded with JDK 25, Gradle 9.9.1, Loom 1.19.4 and the verified 26.3 dependencies. Fourteen JUnit tests passed (zero skipped, zero failures, zero errors):
+The 26.2 port was rebuilt from clean sources on 2026-11-10; `gradle clean build` succeeded with JDK 25, Gradle 9.9.1, Loom 1.19.4 and the verified 26.2 dependencies. Fourteen JUnit tests passed (zero skipped, zero failures, zero errors):
 
 * Partial supply takes only the configured deficit.
 * Missing items are reported and later targets still receive available supplies.

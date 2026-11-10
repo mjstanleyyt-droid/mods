@@ -1,15 +1,17 @@
 # Shulker Auto-Restock
 
-**[Download the mod jar](https://github.com/mjstanleyyt-droid/mods/raw/refs/heads/main/downloads/shulker-autorestock-1.0.0.jar)** · **[Complete project ZIP](https://github.com/mjstanleyyt-droid/mods/raw/refs/heads/main/downloads/shulker-autorestock-1.0.0-project.zip)**
+**[Download the Fabric 26.2 jar](https://github.com/mjstanleyyt-droid/mods/raw/refs/heads/main/downloads/shulker-autorestock-1.0.1-mc26.2.jar)** · **[Complete 26.2 project ZIP](https://github.com/mjstanleyyt-droid/mods/raw/refs/heads/main/downloads/shulker-autorestock-1.0.1-mc26.2-project.zip)**
 
-Prerelease: compilation and 14 automated tests passed; in-game inventory and multiplayer safety remain unverified because the development client's graphics initialization failed.
+Prerelease: the 26.2 clean build and all 14 automated tests passed, and the client rendered the initial Welcome screen. Actual inventory transfers and multiplayer behavior remain unverified.
+
+Remove the 26.3 jar before installing this version. Existing local kits use the same schema and configuration directory. Back up that directory before changing versions. The earlier 26.3 download remains available in `downloads/`.
 
 
-Client-only Fabric inventory kit editor, inventory layout switching, and restocking from a deliberately opened shulker. Targets **Minecraft Java 26.3**, Java 25, Fabric Loader 0.20.1+, and Fabric API 0.166.0+26.3. No server mod, cheats, commands on the server, or operator permissions are needed. Servers may restrict automation; use only where permitted. Multiplayer behavior still requires the manual validation described in [TESTING.md](TESTING.md).
+Client-only Fabric inventory kit editor, inventory layout switching, and restocking from a deliberately opened shulker. Targets **Minecraft Java 26.2**, Java 25, Fabric Loader 0.20.1+, and Fabric API 0.161.0+26.2. No server mod, cheats, commands on the server, or operator permissions are needed. Servers may restrict automation; use only where permitted. Multiplayer behavior still requires the manual validation described in [TESTING.md](TESTING.md).
 
 ## Install
 
-Install Java 25 and the Fabric Loader profile for **26.3**. Put `shulker-autorestock-1.0.0.jar` and the Fabric API jar for 26.3 in your Minecraft installation's `mods/` directory. Launch the Fabric profile. Install on your client only. Make a world backup before testing a new inventory mod.
+Install Java 25 and the Fabric Loader profile for **26.2**. Put `shulker-autorestock-1.0.1-mc26.2.jar` and the Fabric API jar for 26.2 in your Minecraft installation's `mods/` directory. Launch the Fabric profile. Install on your client only. Make a world backup before testing a new inventory mod.
 
 ## Create a kit
 

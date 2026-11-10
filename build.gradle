@@ -1,15 +1,15 @@
 plugins { id 'net.fabricmc.fabric-loom' version '1.19.4'; id 'maven-publish' }
-version = '1.0.0'
+version = project.mod_version
 group = 'dev.restock'
 repositories { mavenCentral() }
 dependencies {
- minecraft 'com.mojang:minecraft:26.3'
- implementation 'net.fabricmc:fabric-loader:0.20.1'
- implementation 'net.fabricmc.fabric-api:fabric-api:0.166.0+26.3'
+ minecraft "com.mojang:minecraft:${project.minecraft_version}"
+ implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+ implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
  testImplementation 'org.junit.jupiter:junit-jupiter:5.13.4'
  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
-java { toolchain.languageVersion = JavaLanguageVersion.of(25); withSourcesJar() }
+java { toolchain.languageVersion = JavaLanguageVersion.of(project.java_version as int); withSourcesJar() }
 processResources { inputs.property 'version', project.version; filesMatching('fabric.mod.json') { expand version: project.version } }
 test { useJUnitPlatform() }
 

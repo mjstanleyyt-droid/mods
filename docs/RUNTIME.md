@@ -1,21 +1,22 @@
-# Development-client smoke attempt (2026-11-10 UTC)
+# Minecraft 26.2 startup smoke test
 
-Attempted `gradle build runClient` with Java 25 and an Xorg dummy display. The build and all 14 automated tests passed. Asset downloading was slow and incomplete; a second smoke attempt used `runClient -x downloadAssets` to test the executable startup with the cached asset subset. This is not a complete game test.
+Run on 2026-11-10 using JDK 25, Fabric Loader 0.20.1, Fabric API 0.161.0+26.2 and the 1.0.1-mc26.2 mod.
 
-Observed in the client log:
+`gradle runClient -x downloadAssets` successfully loaded the mod and mixins, initialized OpenGL with Mesa llvmpipe, reloaded the resource manager, and rendered Minecraft's initial Welcome/accessibility screen. [Startup screenshot](runtime-26.2-startup.png).
+
+Observed log entries:
 
 ```
-Loading Minecraft 26.3 with Fabric Loader 0.20.1
-fabric-api 0.166.0+26.3
-shulker_autorestock 1.0.0
-Initializing MixinExtras ...
-Backend library: LWJGL version 3.4.3-snapshot
-Failed to create backend OpenGL
-Failed to create window for OpenGL context: Couldn't find matching GLX visual
-Failed to create backend Vulkan
-Vulkan is not supported: Installed Vulkan doesn't implement the VK_KHR_surface extension
+Loading Minecraft 26.2 with Fabric Loader 0.20.1
+fabric-api 0.161.0+26.2
+shulker_autorestock 1.0.1-mc26.2
+Using graphics backend OpenGL, using drivers: 4.5 (Core Profile) Mesa 25.0.7-2+deb13u1
+Using graphics device: llvmpipe (LLVM 19.1.7, 256 bits) (Mesa)
+Created: 512x512x0 minecraft:textures/atlas/shulker_boxes.png-atlas
 ```
 
-The mod initializer ran and generated valid `settings.json`, `kits.json` and `profiles.json` under the development run's config directory. No mod initializer or mixin failure appeared before the graphics failure. A Minecraft graphics error dialog was displayed; [screenshot](runtime-graphics-blocker.png).
+The mod initializer generated settings.json, kits.json and profiles.json under the development run's config directory. All three parsed as valid JSON with schema 1. No mod initialization or mixin error was observed.
 
-Minecraft service discovery also failed in the unauthenticated development run. This run did not reach the title screen or enter a world. The Minecraft editor, inventory actions, armor staging and multiplayer behavior have **not** been tested in game. All manual release checklist rows remain NOT RUN. The dummy X display was stopped after recording the failure.
+This used the available cached asset subset rather than downloading all assets. Missing window-icon assets, unavailable audio devices, and unauthenticated Minecraft service requests produced warnings. These did not prevent rendering the Welcome screen. The client and test display were stopped after recording the result.
+
+No world was entered. Kit editor interaction, actual inventory transfers, armor replacement, Survival gameplay and multiplayer synchronization remain untested in game. All manual checklist rows remain NOT RUN; startup success is not inventory safety certification.
