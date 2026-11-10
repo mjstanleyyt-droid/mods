@@ -9,10 +9,16 @@ public class Settings {
       enchantments = true,
       rearrange = true,
       notifications = true;
-  public int armorThreshold = 35, actionDelay = 150;
+  public int armorThreshold = 35, actionDelay = 0;
+
+  public int timingRevision;
 
   public void validate() {
-    if (armorThreshold < 1 || armorThreshold > 100 || actionDelay < 50 || actionDelay > 5000)
+    if (armorThreshold < 1 || armorThreshold > 100 || actionDelay < 0 || actionDelay > 5000)
       throw new IllegalArgumentException("Invalid settings range");
+    if (timingRevision < 0 || timingRevision > 1)
+      throw new IllegalArgumentException("Unsupported timing revision");
+    if (timingRevision == 0 && actionDelay == 150) actionDelay = 0;
+    timingRevision = 1;
   }
 }

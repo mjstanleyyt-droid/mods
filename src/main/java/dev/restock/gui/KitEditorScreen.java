@@ -245,17 +245,24 @@ public final class KitEditorScreen extends Screen {
         },
         "Click to increase remaining-durability threshold by 5%, cycling at 100%.");
     button(
-        kit.settings.actionDelay + " ms",
+        kit.settings.actionDelay == 0 ? "Fast (0 ms)" : kit.settings.actionDelay + " ms",
         right,
         128,
         73,
         () -> {
-          kit.settings.actionDelay =
-              kit.settings.actionDelay >= 1000 ? 50 : kit.settings.actionDelay + 50;
+          int[] delays = {0, 25, 50, 100, 150, 250, 500, 1000};
+          int next = 0;
+          for (int value : delays)
+            if (value > kit.settings.actionDelay) {
+              next = value;
+              break;
+            }
+          kit.settings.actionDelay = next;
           RestockClient.save();
           rebuildWidgets();
         },
-        "Delay after each confirmed server action: 50–1000ms. JSON allows up to 5000ms.");
+        "0 ms is fastest: continue immediately after server confirmation. Click to increase delay"
+            + " for servers that need it.");
     button(
         "Capture",
         left,

@@ -2,7 +2,7 @@
 
 ## Automated checks actually run
 
-The 26.2 port was rebuilt from clean sources on 2026-11-10; `gradle clean build` succeeded with JDK 25, Gradle 9.9.1, Loom 1.19.4 and the verified 26.2 dependencies. Fourteen JUnit tests passed (zero skipped, zero failures, zero errors):
+The 26.2 port was rebuilt from clean sources on 2026-11-10; `gradle clean build` succeeded with JDK 25, Gradle 9.9.1, Loom 1.19.4 and the verified 26.2 dependencies. Twenty-nine JUnit tests passed (zero skipped, zero failures, zero errors):
 
 * Partial supply takes only the configured deficit.
 * Missing items are reported and later targets still receive available supplies.
@@ -18,6 +18,16 @@ The 26.2 port was rebuilt from clean sources on 2026-11-10; `gradle clean build`
 * Unknown configuration schema is preserved in a backup.
 * Kit duplication produces an independent UUID and settings.
 * Invalid in-memory data cannot replace an existing kits file.
+
+Additional fast-mode checks run for 1.0.2 (15 tests):
+
+* Verified 2-click half-stack, 4-click quarter-stack and 3-click nearly-full-stack transfers.
+* Verified partial destinations, odd counts and unequal slot limits.
+* Exhaustively simulated valid transfers with stack limit 8 and tested 250 deterministic randomized vanilla-stack transfers. Every click conserved all items, respected capacities, and finished with an empty cursor and exact final counts.
+* Verified invalid transfers are refused and oversized modded stacks remain safe.
+* Verified zero delay defaults, validation, legacy 150 ms default migration, persistence across reload, preservation of other custom delays, and preservation of an explicitly reselected 150 ms delay.
+
+Manual fast-mode checks remain NOT RUN: native hotbar SWAP on a live container, multi-packet server confirmation timing, nonzero delays on multiplayer, cancellation during a temporarily overfilled split, full inventories, server rejection, and item conservation during actual gameplay. Click-count tests do not establish real-world latency or inventory safety.
 
 JUnit reports: `build/reports/tests/test/index.html`. Machine-readable reports: `build/test-results/test/`. These tests exercise planning and disk persistence, **not** Minecraft's network or GUI runtime. They do not prove no loss in multiplayer. See `docs/RUNTIME.md` for the development-client launch result.
 

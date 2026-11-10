@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="dev.restock.ConfigTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-10T22:24:21.640Z" hostname="259d827fd69d" time="1.243">
+<testsuite name="dev.restock.ConfigTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-10T22:45:08.634Z" hostname="259d827fd69d" time="0.683">
   <properties/>
-  <testcase name="firstLaunchAndRestart()" classname="dev.restock.ConfigTest" time="0.748"/>
-  <testcase name="invalidSaveDoesNotReplaceFile()" classname="dev.restock.ConfigTest" time="0.061"/>
-  <testcase name="corruptedFileIsBackedUp()" classname="dev.restock.ConfigTest" time="0.091"/>
-  <testcase name="invalidSchemaIsPreserved()" classname="dev.restock.ConfigTest" time="0.062"/>
-  <testcase name="duplicateIsIndependent()" classname="dev.restock.ConfigTest" time="0.056"/>
+  <testcase name="firstLaunchAndRestart()" classname="dev.restock.ConfigTest" time="0.297"/>
+  <testcase name="invalidSaveDoesNotReplaceFile()" classname="dev.restock.ConfigTest" time="0.096"/>
+  <testcase name="corruptedFileIsBackedUp()" classname="dev.restock.ConfigTest" time="0.102"/>
+  <testcase name="invalidSchemaIsPreserved()" classname="dev.restock.ConfigTest" time="0.079"/>
+  <testcase name="duplicateIsIndependent()" classname="dev.restock.ConfigTest" time="0.049"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

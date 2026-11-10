@@ -3,6 +3,7 @@ package dev.restock.inventory;
 import dev.restock.RestockClient;
 import dev.restock.compat.Stacks;
 import dev.restock.plan.Planner;
+import dev.restock.plan.TransferClicks;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.util.*;
 import net.minecraft.client.Minecraft;
@@ -19,6 +20,7 @@ public final class Transactions {
   private record Click(
       int slot,
       int button,
+      ContainerInput input,
       List<ItemStack> before,
       ItemStack cursorBefore,
       List<ItemStack> after,
@@ -27,6 +29,8 @@ public final class Transactions {
   private final Deque<Click> queue = new ArrayDeque<>();
   private AbstractContainerMenu menu;
   private boolean cancelRequested;
+  private boolean atBoundary = true;
+  private final Set<Click> boundaries = Collections.newSetFromMap(new IdentityHashMap<>());
   private Click pending;
   private long sent, next;
   private int delay;
@@ -47,24 +51,75 @@ public final class Transactions {
     ItemStack cursor = ItemStack.EMPTY;
     try {
       for (var m : moves) {
-        cursor = add(sim, cursor, m.from(), 0);
-        if (m.swap()) {
-          cursor = add(sim, cursor, m.to(), 0);
-          cursor = add(sim, cursor, m.from(), 0);
-        } else {
-          if (m.count() == cursor.getCount()) cursor = add(sim, cursor, m.to(), 0);
-          else {
-            for (int i = 0; i < m.count(); i++) cursor = add(sim, cursor, m.to(), 1);
+        if (!directSwap(sim, m)) {
+          if (m.swap()) {
             cursor = add(sim, cursor, m.from(), 0);
+            cursor = add(sim, cursor, m.to(), 0);
+            cursor = add(sim, cursor, m.from(), 0);
+          } else {
+            ItemStack source = sim.get(m.from());
+            ItemStack destination = sim.get(m.to());
+            if (!destination.isEmpty() && !ItemStack.isSameItemSameComponents(source, destination))
+              throw new IllegalStateException("Cannot merge different components");
+            for (var step :
+                TransferClicks.plan(
+                    source.getCount(),
+                    destination.getCount(),
+                    m.count(),
+                    menu.getSlot(m.from()).getMaxStackSize(source),
+                    menu.getSlot(m.to()).getMaxStackSize(source),
+                    source.getMaxStackSize())) {
+              cursor = add(sim, cursor, step.source() ? m.from() : m.to(), step.button());
+            }
           }
         }
         if (!cursor.isEmpty()) throw new IllegalStateException("Planner left a cursor stack");
+        boundaries.add(queue.getLast());
       }
     } catch (RuntimeException e) {
       clear();
       throw e;
     }
     next = System.currentTimeMillis();
+  }
+
+  private boolean directSwap(List<ItemStack> sim, Planner.Move move) {
+    var mc = Minecraft.getInstance();
+    ItemStack a = sim.get(move.from()), b = sim.get(move.to());
+    if (move.count() != a.getCount() || (!move.swap() && !b.isEmpty())) return false;
+    Slot from = menu.getSlot(move.from()), to = menu.getSlot(move.to());
+    int hotbar = hotbarIndex(to);
+    int clicked = move.from();
+    if (hotbar < 0) {
+      hotbar = hotbarIndex(from);
+      clicked = move.to();
+    }
+    if (hotbar < 0) return false;
+    if (!from.mayPickup(mc.player)
+        || (!b.isEmpty() && !to.mayPickup(mc.player))
+        || !to.mayPlace(a)
+        || a.getCount() > to.getMaxStackSize(a)
+        || (!b.isEmpty() && (!from.mayPlace(b) || b.getCount() > from.getMaxStackSize(b))))
+      throw new IllegalStateException("Slot refuses swap");
+    List<ItemStack> before = copies(sim);
+    sim.set(move.from(), b.copy());
+    sim.set(move.to(), a.copy());
+    queue.add(
+        new Click(
+            clicked,
+            hotbar,
+            ContainerInput.SWAP,
+            before,
+            ItemStack.EMPTY,
+            copies(sim),
+            ItemStack.EMPTY));
+    return true;
+  }
+
+  private int hotbarIndex(Slot slot) {
+    var player = Minecraft.getInstance().player;
+    int index = slot.getContainerSlot();
+    return slot.container == player.getInventory() && index >= 0 && index < 9 ? index : -1;
   }
 
   private ItemStack add(List<ItemStack> s, ItemStack cursor, int slot, int button) {
@@ -78,9 +133,11 @@ public final class Transactions {
     List<ItemStack> before = copies(s);
     ItemStack cb = c.copy();
     if (c.isEmpty()) {
-      if (button != 0) throw new IllegalStateException();
-      c = a;
-      a = ItemStack.EMPTY;
+      int n = button == 0 ? a.getCount() : a.getCount() / 2 + a.getCount() % 2;
+      if (n <= 0) throw new IllegalStateException("Empty pickup");
+      c = a.copyWithCount(n);
+      a.shrink(n);
+      if (a.isEmpty()) a = ItemStack.EMPTY;
     } else if (a.isEmpty() || ItemStack.isSameItemSameComponents(a, c)) {
       int n =
           Math.min(
@@ -98,7 +155,7 @@ public final class Transactions {
       c = temp;
     }
     s.set(slot, a);
-    queue.add(new Click(slot, button, before, cb, copies(s), c.copy()));
+    queue.add(new Click(slot, button, ContainerInput.PICKUP, before, cb, copies(s), c.copy()));
     return c;
   }
 
@@ -107,6 +164,10 @@ public final class Transactions {
     RestockClient.notice(
         "Cancelling after the current move returns the cursor safely. Press Escape again after it"
             + " stops.");
+  }
+
+  public void onServerUpdate() {
+    if (busy()) tick();
   }
 
   public void tick() {
@@ -123,14 +184,15 @@ public final class Transactions {
     }
     if (pending != null) {
       if (equal(menu, pending.after, pending.cursorAfter)) {
+        atBoundary = boundaries.remove(pending);
         pending = null;
         next = now + delay;
       } else if (now - sent > 5000) {
         cancel("Server did not confirm the inventory action. Stopped; check your cursor.");
       }
-      return;
+      if (pending != null || !busy()) return;
     }
-    if (cancelRequested && menu.getCarried().isEmpty()) {
+    if (cancelRequested && atBoundary && menu.getCarried().isEmpty()) {
       cancel("Inventory operation cancelled safely.");
       return;
     }
@@ -147,6 +209,7 @@ public final class Transactions {
       return;
     }
     pending = c;
+    atBoundary = false;
     sent = now;
     // Report the genuine pre-click cursor and no predicted slot updates. Vanilla returns
     // authoritative changes.
@@ -157,7 +220,7 @@ public final class Transactions {
                 menu.getStateId(),
                 (short) c.slot,
                 (byte) c.button,
-                ContainerInput.PICKUP,
+                c.input,
                 new Int2ObjectOpenHashMap<>(),
                 HashedStack.create(
                     menu.getCarried(), mc.getConnection().decoratedHashOpsGenenerator())));
@@ -187,6 +250,8 @@ public final class Transactions {
 
   private void clear() {
     cancelRequested = false;
+    atBoundary = true;
+    boundaries.clear();
     queue.clear();
     pending = null;
     menu = null;

@@ -60,7 +60,7 @@ class ConfigTest {
     Kit b = a.duplicate(a.current());
     b.settings.actionDelay = 500;
     assertNotEquals(b.id, a.current().id);
-    assertEquals(150, a.current().settings.actionDelay);
+    assertEquals(0, a.current().settings.actionDelay);
   }
 
   @Test
