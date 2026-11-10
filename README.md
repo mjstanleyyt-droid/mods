@@ -1,6 +1,6 @@
 # Shulker Auto-Restock
 
-**[Download the mod jar](https://github.com/mjstanleyyt-droid/mods/releases/download/shulker-autorestock-v1.0.0/shulker-autorestock-1.0.0.jar)** · **[Complete project ZIP](https://github.com/mjstanleyyt-droid/mods/releases/download/shulker-autorestock-v1.0.0/shulker-autorestock-1.0.0-project.zip)**
+**[Download the mod jar](https://github.com/mjstanleyyt-droid/mods/raw/refs/heads/main/downloads/shulker-autorestock-1.0.0.jar)** · **[Complete project ZIP](https://github.com/mjstanleyyt-droid/mods/raw/refs/heads/main/downloads/shulker-autorestock-1.0.0-project.zip)**
 
 Prerelease: compilation and 14 automated tests passed; in-game inventory and multiplayer safety remain unverified because the development client's graphics initialization failed.
 
