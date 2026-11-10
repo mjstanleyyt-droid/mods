@@ -1,0 +1,1 @@
+{"schemaVersion":1,"id":"shulker_autorestock","version":"${version}","name":"Shulker Auto-Restock","description":"Client inventory kits and safe shulker restocking.","environment":"client","entrypoints":{"client":["dev.restock.RestockClient"]},"mixins":["restock.mixins.json"],"depends":{"fabricloader":">=0.20.1","minecraft":"26.3","java":">=25","fabric-api":"*"},"license":"MIT"}
