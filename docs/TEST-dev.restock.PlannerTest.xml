@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="dev.restock.PlannerTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-10T22:45:09.497Z" hostname="259d827fd69d" time="1.01">
+<testsuite name="dev.restock.PlannerTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-11T02:56:42.872Z" hostname="259d827fd69d" time="0.25">
   <properties/>
-  <testcase name="disabledRearrangementPreservesOccupiedSlots()" classname="dev.restock.PlannerTest" time="0.005"/>
-  <testcase name="partialSupplyOnlyTakesDeficit()" classname="dev.restock.PlannerTest" time="0.004"/>
+  <testcase name="disabledRearrangementPreservesOccupiedSlots()" classname="dev.restock.PlannerTest" time="0.002"/>
+  <testcase name="partialSupplyOnlyTakesDeficit()" classname="dev.restock.PlannerTest" time="0.002"/>
   <testcase name="differentComponentsCannotMerge()" classname="dev.restock.PlannerTest" time="0.001"/>
   <testcase name="reservedStacksNotStolen()" classname="dev.restock.PlannerTest" time="0.0"/>
-  <testcase name="fullInventoryCycle()" classname="dev.restock.PlannerTest" time="0.0"/>
-  <testcase name="fullInventoryPartialCannotDisplace()" classname="dev.restock.PlannerTest" time="0.009"/>
+  <testcase name="fullInventoryCycle()" classname="dev.restock.PlannerTest" time="0.001"/>
+  <testcase name="fullInventoryPartialCannotDisplace()" classname="dev.restock.PlannerTest" time="0.001"/>
   <testcase name="unrelatedMovedOnlyWhenRequired()" classname="dev.restock.PlannerTest" time="0.001"/>
-  <testcase name="randomizedConservation()" classname="dev.restock.PlannerTest" time="0.973"/>
-  <testcase name="missingSkipsAndContinues()" classname="dev.restock.PlannerTest" time="0.007"/>
+  <testcase name="randomizedConservation()" classname="dev.restock.PlannerTest" time="0.236"/>
+  <testcase name="missingSkipsAndContinues()" classname="dev.restock.PlannerTest" time="0.002"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

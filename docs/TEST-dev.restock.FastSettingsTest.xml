@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="dev.restock.FastSettingsTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-10T22:45:09.372Z" hostname="259d827fd69d" time="0.124">
+<testsuite name="dev.restock.FastSettingsTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-11T02:56:42.566Z" hostname="259d827fd69d" time="0.04">
   <properties/>
-  <testcase name="explicitlyRechosen150msIsPreserved()" classname="dev.restock.FastSettingsTest" time="0.005"/>
-  <testcase name="negativeDelayIsRejected()" classname="dev.restock.FastSettingsTest" time="0.006"/>
-  <testcase name="existingCustomDelayIsPreserved()" classname="dev.restock.FastSettingsTest" time="0.001"/>
-  <testcase name="newSettingsAreFastAndZeroIsValid()" classname="dev.restock.FastSettingsTest" time="0.005"/>
-  <testcase name="legacyDefaultMigratesAndPersistsAcrossReload()" classname="dev.restock.FastSettingsTest" time="0.1"/>
+  <testcase name="explicitlyRechosen150msIsPreserved()" classname="dev.restock.FastSettingsTest" time="0.003"/>
+  <testcase name="negativeDelayIsRejected()" classname="dev.restock.FastSettingsTest" time="0.003"/>
+  <testcase name="existingCustomDelayIsPreserved()" classname="dev.restock.FastSettingsTest" time="0.002"/>
+  <testcase name="newSettingsAreFastAndZeroIsValid()" classname="dev.restock.FastSettingsTest" time="0.001"/>
+  <testcase name="legacyDefaultMigratesAndPersistsAcrossReload()" classname="dev.restock.FastSettingsTest" time="0.023"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

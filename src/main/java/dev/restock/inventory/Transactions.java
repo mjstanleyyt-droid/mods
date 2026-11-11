@@ -2,7 +2,9 @@ package dev.restock.inventory;
 
 import dev.restock.RestockClient;
 import dev.restock.compat.Stacks;
+import dev.restock.plan.MoveOrder;
 import dev.restock.plan.Planner;
+import dev.restock.plan.ShulkerQuickMove;
 import dev.restock.plan.TransferClicks;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.util.*;
@@ -13,8 +15,8 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Sends ordinary PICKUP interactions WITHOUT local prediction. Only incoming server state advances
- * the queue.
+ * Sends checked vanilla inventory interactions WITHOUT local prediction. Incoming server state
+ * advances the queue.
  */
 public final class Transactions {
   private record Click(
@@ -50,7 +52,16 @@ public final class Transactions {
     List<ItemStack> sim = copy(menu);
     ItemStack cursor = ItemStack.EMPTY;
     try {
-      for (var m : moves) {
+      boolean shulker = standardShulker();
+      List<Planner.Move> ordered = shulker ? MoveOrder.prioritize(moves, m -> -m.to()) : moves;
+      for (int index = 0; index < ordered.size(); ) {
+        int combined = shulker ? quickMove(sim, ordered, index) : 0;
+        if (combined > 0) {
+          boundaries.add(queue.getLast());
+          index += combined;
+          continue;
+        }
+        var m = ordered.get(index++);
         if (!directSwap(sim, m)) {
           if (m.swap()) {
             cursor = add(sim, cursor, m.from(), 0);
@@ -81,6 +92,70 @@ public final class Transactions {
       throw e;
     }
     next = System.currentTimeMillis();
+  }
+
+  private boolean standardShulker() {
+    var inventory = Minecraft.getInstance().player.getInventory();
+    if (menu.getClass() != ShulkerBoxMenu.class || menu.slots.size() != 63) return false;
+    var box = menu.getSlot(0).container;
+    if (box == inventory) return false;
+    for (int i = 0; i < 63; i++) {
+      Slot slot = menu.getSlot(i);
+      if (i < 27) {
+        if (slot.container != box || slot.getContainerSlot() != i) return false;
+      } else if (slot.container != inventory
+          || slot.getContainerSlot() != (i < 54 ? i - 18 : i - 54)) return false;
+    }
+    return true;
+  }
+
+  private int quickMove(List<ItemStack> sim, List<Planner.Move> moves, int start) {
+    int source = moves.get(start).from();
+    if (source < 0 || source >= 27 || moves.get(start).swap()) return 0;
+    ItemStack item = sim.get(source);
+    if (item.isEmpty()) return 0;
+    List<Planner.Stack> counts = new ArrayList<>();
+    int[] limits = new int[63];
+    boolean[] mayPlace = new boolean[63];
+    for (int i = 0; i < 63; i++) {
+      ItemStack stack = sim.get(i);
+      counts.add(
+          stack.isEmpty()
+              ? null
+              : new Planner.Stack(
+                  ItemStack.isSameItemSameComponents(item, stack) ? "moving" : "other:" + i,
+                  stack.getCount(),
+                  stack.getMaxStackSize()));
+      limits[i] = menu.getSlot(i).getMaxStackSize(item);
+      mayPlace[i] = menu.getSlot(i).mayPlace(item);
+    }
+    var certified =
+        ShulkerQuickMove.certify(counts, moves, start, limits, mayPlace, item.isStackable());
+    if (certified.isEmpty()) return 0;
+    if (!menu.getSlot(source).mayPickup(Minecraft.getInstance().player))
+      throw new IllegalStateException("Slot cannot be taken");
+    List<ItemStack> after = new ArrayList<>();
+    for (int i = 0; i < 63; i++) {
+      var result = certified.get().after().get(i);
+      after.add(
+          result == null
+              ? ItemStack.EMPTY
+              : result.key().equals("moving")
+                  ? item.copyWithCount(result.count())
+                  : sim.get(i).copy());
+    }
+    queue.add(
+        new Click(
+            source,
+            0,
+            ContainerInput.QUICK_MOVE,
+            copies(sim),
+            ItemStack.EMPTY,
+            copies(after),
+            ItemStack.EMPTY));
+    sim.clear();
+    sim.addAll(after);
+    return certified.get().consumedMoves();
   }
 
   private boolean directSwap(List<ItemStack> sim, Planner.Move move) {

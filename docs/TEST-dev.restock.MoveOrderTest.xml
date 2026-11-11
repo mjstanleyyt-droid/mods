@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.restock.MoveOrderTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-11T02:56:42.607Z" hostname="259d827fd69d" time="0.264">
+  <properties/>
+  <testcase name="sharedSlotDependenciesKeepTheirOrder()" classname="dev.restock.MoveOrderTest" time="0.01"/>
+  <testcase name="randomizedValidPlansPreserveEveryFinalSlot()" classname="dev.restock.MoveOrderTest" time="0.248"/>
+  <testcase name="tiesRemainStableAndEmptyPlansWork()" classname="dev.restock.MoveOrderTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.restock.ShulkerQuickMoveTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-11-11T02:56:43.123Z" hostname="259d827fd69d" time="0.146">
+  <properties/>
+  <testcase name="fullInventoryCanAcceptOnlyTheExactDeficit()" classname="dev.restock.ShulkerQuickMoveTest" time="0.003"/>
+  <testcase name="incompatibleLayoutAndNoOpAreRejected()" classname="dev.restock.ShulkerQuickMoveTest" time="0.001"/>
+  <testcase name="distinctComponentsDoNotMerge()" classname="dev.restock.ShulkerQuickMoveTest" time="0.001"/>
+  <testcase name="wrongDestinationFallsBackWithoutMovingAnything()" classname="dev.restock.ShulkerQuickMoveTest" time="0.001"/>
+  <testcase name="fullStackIntoVanillaDestinationIsOneAction()" classname="dev.restock.ShulkerQuickMoveTest" time="0.001"/>
+  <testcase name="randomizedCertificatesAgreeWithVanillaReference()" classname="dev.restock.ShulkerQuickMoveTest" time="0.107"/>
+  <testcase name="twoKitRefillsCanShareOneShiftClick()" classname="dev.restock.ShulkerQuickMoveTest" time="0.001"/>
+  <testcase name="unconfiguredMatchingStackCannotBeFilled()" classname="dev.restock.ShulkerQuickMoveTest" time="0.022"/>
+  <testcase name="nonStackableItemsSkipMerging()" classname="dev.restock.ShulkerQuickMoveTest" time="0.001"/>
+  <testcase name="reversedIndependentMovesReduceAnEmptyInventoryFixtureFrom45ActionsTo27()" classname="dev.restock.ShulkerQuickMoveTest" time="0.002"/>
+  <testcase name="partialKitCannotTakeWholeSource()" classname="dev.restock.ShulkerQuickMoveTest" time="0.001"/>
+  <testcase name="swapsAndPlayerSourcesAreNotShiftClickOptimized()" classname="dev.restock.ShulkerQuickMoveTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

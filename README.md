@@ -1,8 +1,8 @@
 # Shulker Auto-Restock
 
-**[Download the Fabric 26.2 jar](https://github.com/mjstanleyyt-droid/mods/raw/refs/heads/main/downloads/shulker-autorestock-1.0.2-mc26.2.jar)** · **[Complete 26.2 project ZIP](https://github.com/mjstanleyyt-droid/mods/raw/refs/heads/main/downloads/shulker-autorestock-1.0.2-mc26.2-project.zip)**
+**[Download the Fabric 26.2 jar](https://github.com/mjstanleyyt-droid/mods/raw/refs/heads/main/downloads/shulker-autorestock-1.0.3-mc26.2.jar)** · **[Complete 26.2 project ZIP](https://github.com/mjstanleyyt-droid/mods/raw/refs/heads/main/downloads/shulker-autorestock-1.0.3-mc26.2-project.zip)**
 
-Prerelease: the 26.2 clean build and all 29 automated tests passed, and the client rendered the initial Welcome screen. Actual inventory transfers and multiplayer behavior remain unverified.
+Prerelease: the 26.2 clean build and all 44 automated tests passed, and the client rendered the initial Welcome screen. Actual inventory transfers and multiplayer behavior remain unverified.
 
 Remove the 26.3 jar before installing this version. Existing local kits use the same schema and configuration directory. Back up that directory before changing versions. The earlier 26.3 download remains available in `downloads/`.
 
@@ -11,7 +11,7 @@ Client-only Fabric inventory kit editor, inventory layout switching, and restock
 
 ## Install
 
-Install Java 25 and the Fabric Loader profile for **26.2**. Put `shulker-autorestock-1.0.2-mc26.2.jar` and the Fabric API jar for 26.2 in your Minecraft installation's `mods/` directory. Launch the Fabric profile. Install on your client only. Make a world backup before testing a new inventory mod.
+Install Java 25 and the Fabric Loader profile for **26.2**. Put `shulker-autorestock-1.0.3-mc26.2.jar` and the Fabric API jar for 26.2 in your Minecraft installation's `mods/` directory. Launch the Fabric profile. Install on your client only. Make a world backup before testing a new inventory mod.
 
 ## Create a kit
 
@@ -31,6 +31,16 @@ Selecting a virtual item never gives it to you. Use **Capture** to capture your 
 ## Switch layouts in the normal inventory
 
 Press **E**, click **Kits** to the right of the vanilla inventory, and select a kit. The normal inventory remains vanilla. Matching items already in your 36 inventory slots move, merge or split into kit positions. No chest or nearby shulker is searched. Missing items stay missing; extra items remain in your inventory. Whole-stack swaps resolve full-inventory cycles when possible. A blocked partial-stack move may be skipped rather than risking an item. Incomplete slots are reported using player inventory indices 1–36 (1–9 hotbar).
+
+## Additional shift-click optimization (1.0.3)
+
+Eligible main-inventory transfers now use one vanilla shift-click instead of pickup followed by placement. The mod computes vanilla 26.2's merge-first, reverse-fill behavior against the synchronized contents. It enables this path only when the entire resulting inventory exactly matches one or more planned kit transfers. It never uses shift-click merely because space exists: a route that fills an unconfigured slot, merges into an unrelated stack, takes too much, or puts an item in the wrong kit position falls back to the checked click sequence.
+
+Independent transfers are ordered to fit vanilla's fill order. Any moves sharing a source or destination retain their required dependency order, including splits, swaps and full-inventory cycles. Compatible refills of several matching partial stacks from the same source can sometimes share a single shift-click. Only the standard 27+36 shulker slot mapping qualifies; other handlers use the prior safe path. Every action still waits for the exact returned server state.
+
+A tested empty-inventory fixture with 27 available full stacks, nine hotbar targets and the last 18 main-inventory targets needs **27 actions instead of 45**. Other layouts can benefit less: empty unconfigured slots or partial stacks can prevent a shift-click from landing exactly where the kit requires. This is an action-count comparison, not a multiplayer speed measurement. Zero delay and server-packet continuation remain enabled; no packet batching or unverified actions were added.
+
+A shulker has only 27 slots. Filling all 36 empty player slots with 36 full stacks is impossible from one ordinary shulker alone. A kit that fills more player slots from that box needs smaller stack quantities, sufficient existing player items, or another restock pass from another box. Missing supplies are reported normally.
 
 ## Fast restocking (1.0.2)
 
@@ -96,7 +106,7 @@ Each file is written via a forced temporary file and atomic rename. An unsupport
 
 Install a JDK 25; run `./gradlew build` (Windows: `gradlew.bat build`). The wrapper pins Gradle 9.9.1 with the verified distribution SHA-256. Output is in `build/libs/`; install the main jar, not the `-sources.jar`. `./gradlew runClient` starts a development client. Dependency verification evidence and URLs are in [docs/DEPENDENCIES.md](docs/DEPENDENCIES.md).
 
-The pure `plan/Planner` has no Minecraft dependencies. `inventory/Transactions` translates planned moves into checked ordinary PICKUP or hotbar SWAP clicks and waits for actual server-returned state; it deliberately does **not** locally predict inventory changes. It sends genuine pre-click cursor hashes with no predicted changed-slot map, so vanilla sends authoritative changes. No state IDs are fabricated. A bounded count-only planner searches for short split/merge sequences and falls back to returning the smaller remainder for unusually large modded stacks. Every click checks the entire menu and cursor before and after, the same handler identity, valid slot admission, stack sizes and pickup permissions. Five seconds without the expected state stops the queue. No overlapping queue can start.
+The pure `plan/Planner` has no Minecraft dependencies. `inventory/Transactions` translates planned moves into checked ordinary PICKUP, hotbar SWAP or certified QUICK_MOVE clicks and waits for actual server-returned state; it deliberately does **not** locally predict inventory changes. It sends genuine pre-click cursor hashes with no predicted changed-slot map, so vanilla sends authoritative changes. No state IDs are fabricated. A bounded count-only planner searches for short split/merge sequences and falls back to returning the smaller remainder for unusually large modded stacks. Every click checks the entire menu and cursor before and after, the same handler identity, valid slot admission, stack sizes and pickup permissions. Five seconds without the expected state stops the queue. No overlapping queue can start.
 
 `compat/Stacks` isolates registry and component serialization; future version ports should start there, the transaction packet adapter, GUI extractor names and the synchronization mixin. Exact slot mappings are resolved from slot inventory identity plus inventory index, with strict handler-type checks. Armor staging remains in its own handler. Model and schema changes require explicit migration rather than silently changing existing kits.
 

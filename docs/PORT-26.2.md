@@ -1,6 +1,6 @@
 # Fabric 26.2 port
 
-Original port version: `1.0.1-mc26.2`. Current fast update: `1.0.2-mc26.2`; see README.md and TESTING.md for the timing changes and additional tests.
+Original port version: `1.0.1-mc26.2`. Current fast update: `1.0.3-mc26.2`; see README.md and TESTING.md for the timing changes and additional tests.
 
 - Verified the exact Minecraft 26.2 release and Java 25 requirement using Mojang's version manifest.
 - Verified and compiled against Fabric Loader 0.20.1, Fabric API 0.161.0+26.2, and Loom 1.19.4.

@@ -2,7 +2,7 @@
 
 ## Automated checks actually run
 
-The 26.2 port was rebuilt from clean sources on 2026-11-10; `gradle clean build` succeeded with JDK 25, Gradle 9.9.1, Loom 1.19.4 and the verified 26.2 dependencies. Twenty-nine JUnit tests passed (zero skipped, zero failures, zero errors):
+The 26.2 port was rebuilt from clean sources on 2026-11-10; `gradle clean build` succeeded with JDK 25, Gradle 9.9.1, Loom 1.19.4 and the verified 26.2 dependencies. Forty-four JUnit tests passed (zero skipped, zero failures, zero errors):
 
 * Partial supply takes only the configured deficit.
 * Missing items are reported and later targets still receive available supplies.
@@ -28,6 +28,17 @@ Additional fast-mode checks run for 1.0.2 (15 tests):
 * Verified zero delay defaults, validation, legacy 150 ms default migration, persistence across reload, preservation of other custom delays, and preservation of an explicitly reselected 150 ms delay.
 
 Manual fast-mode checks remain NOT RUN: native hotbar SWAP on a live container, multi-packet server confirmation timing, nonzero delays on multiplayer, cancellation during a temporarily overfilled split, full inventories, server rejection, and item conservation during actual gameplay. Click-count tests do not establish real-world latency or inventory safety.
+
+Additional 1.0.3 checks run (15 tests):
+
+* One-action full-stack transfer into vanilla's next destination; rejection of incorrect destinations, excess withdrawal, unconfigured merges, swaps, unsupported handlers, and no-op shift-clicks.
+* Component-distinct items remain separate; nonstackable items skip the merge pass; a full inventory can accept only its exact remaining capacity.
+* Two compatible refills from one source can share one certified shift-click.
+* A valid 27-stack empty-inventory fixture requires 27 rather than 45 actions.
+* 2,000 randomized certificates were checked against an independent count-array interpreter of vanilla's repeated quickMoveStack behavior. Exact final states and item conservation were verified, and reducing a requested quantity caused excess-taking routes to be rejected.
+* 1,000 randomized valid rearrangement plans were reordered; every final slot matched the unreordered result. Shared-slot dependencies and stable ties were checked separately.
+
+Manual shift-click checks remain NOT RUN: actual server QUICK_MOVE routing, interaction with server plugins that override it, exact quantities on full and partial shulkers, cancellation between server slot updates, and measured multiplayer timing. The reference interpreter follows the verified Minecraft 26.2 bytecode; it does not replace a live server test.
 
 JUnit reports: `build/reports/tests/test/index.html`. Machine-readable reports: `build/test-results/test/`. These tests exercise planning and disk persistence, **not** Minecraft's network or GUI runtime. They do not prove no loss in multiplayer. See `docs/RUNTIME.md` for the development-client launch result.
 
